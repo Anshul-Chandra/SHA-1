@@ -1,3 +1,8 @@
+/* *
+ * Description:
+ *  sha1.cpp consists of implementation of methods for SHA1 interface as defined in the sha1.h header file
+ * */
+
 #include <iomanip>
 #include <sstream>
 #include "sha1.h"
@@ -38,7 +43,9 @@ int SHA1::reset()
     return SUCCESS;
 }
 
-
+/* *
+ * Take input from client and update the message block using the SHA1::input method below
+ * */
 int SHA1::updateInput(const std::string &message, InputType type)
 {
     if(type == STRING)
@@ -56,6 +63,9 @@ int SHA1::updateInput(const std::string &message, InputType type)
     }
 }
 
+/* *
+ * Fill the message block using the input provided by the client
+ * */
 int SHA1::input(const uint8_t *message, unsigned length)
 {
     if(!length)
@@ -93,10 +103,24 @@ int SHA1::input(const uint8_t *message, unsigned length)
     return (state == PROCESS) ? SUCCESS : FAILURE;
 }
 
+/* *
+ * Process the message block and transforms the bits as per SHA-1 algorithm.
+ * The message should be padded as a prerequisite
+ * */
 int SHA1::processMessageBlock()
 {
     uint32_t A, B, C, D, E;         /* Word buffers */
     uint32_t W[80];                 /* Word sequence */
+
+    A = messageDigest[0];
+    B = messageDigest[1];
+    C = messageDigest[2];
+    D = messageDigest[3];
+    E = messageDigest[4];
+
+    //-------------------------------------------------------------------------------------------
+    // Message scheduler [start]
+    //-------------------------------------------------------------------------------------------
 
     // First 16 words (32 bits each) in the array come from the 512 bits in the messageBlock
     for(int  t = 0; t < 16; ++t)
@@ -113,11 +137,10 @@ int SHA1::processMessageBlock()
         W[t] = CircularShift(1, W[t-3] ^ W[t-8] ^ W[t-14] ^ W[t-16]);
     }
 
-    A = messageDigest[0];
-    B = messageDigest[1];
-    C = messageDigest[2];
-    D = messageDigest[3];
-    E = messageDigest[4];
+    //-------------------------------------------------------------------------------------------
+    // Message scheduler [end]
+    // Processing of message digest starts (5 stages with 20 rounds each)
+    //-------------------------------------------------------------------------------------------
 
     /* *
      * Stage 1: Rounds 0 to 19
@@ -177,12 +200,15 @@ int SHA1::processMessageBlock()
     messageDigest[3] += D;
     messageDigest[4] += E;
 
-    // Reset the message block index to read next set of messages
+    // Done with the current message block contents. Reset the message block index to read next set of messages
     messageBlockIndex = 0;
 
     return SUCCESS;
 }
 
+/* *
+* Perform message padding to make the message an even 512 bits
+* */
 int SHA1::padMessageBlock()
 {
     if(messageBlockIndex > 55)
@@ -226,6 +252,9 @@ int SHA1::padMessageBlock()
     return SHA1::processMessageBlock();
 }
 
+/* *
+* Transform the hash generated (as available in messageDigest) to string and return to the client
+* */
 int SHA1::getHashValue(std::string &digest)
 {
     if(state != PROCESS)
@@ -247,7 +276,6 @@ int SHA1::getHashValue(std::string &digest)
         state       = COMPUTED;
     }
 
-    /* Hex std::string */
     std::ostringstream result;
     for (size_t i = 0; i < sizeof(messageDigest) / sizeof(messageDigest[0]); i++)
     {

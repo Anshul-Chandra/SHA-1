@@ -1,3 +1,9 @@
+/* *
+ * Description:
+ *  sha1.h consists of class definition for SHA1 which implements the Secure Hashing Algorithm (https://tools.ietf.org/html/rfc3174).
+ * 
+ *  Refer sha1.cpp for implementation of methods
+ * */
 
 #ifndef SHA1_H
 #define SHA1_H
@@ -39,9 +45,9 @@ class SHA1
 
         uint32_t indexLow;
         uint32_t indexHigh;
-        int_least16_t messageBlockIndex;
+        int_least16_t messageBlockIndex;        /* pointer to currently filled bits in the messageBlock */
 
-        int state;
+        SHAState state;                         /* current state of the SHA-1 generation process        */
 
         /* *
          * Reset the variables and state variables
@@ -49,12 +55,12 @@ class SHA1
         int reset();
 
         /* *
-         * Used to get the next 512 bits of the message in message block
+         * Process the contents of the messageBlock as per SHA-1 algorithm
          * */
         int processMessageBlock();
 
         /* *
-         * Message should be padde to an even 512 bits
+         * Message should be padded to an even 512 bits
          *  - First padding bit must be '1'
          *  - The last 64 bits represent the length of the original message
          *  - All the bits in between shoule be '0'
@@ -86,9 +92,10 @@ class SHA1
          * Description:
          *  Returns the SHA1 hash generated
          * Parameters:
-         *  uint8_t array to be filled with generated hash value
+         *  std::string digest to be filled with generated hash value
          * Returns:
-         *  SHAState 'COMPUTED' on successfull generation of hash
+         *  SHAResult 'SUCCESS' on successfull generation of hash; FAILURE otherwise;
+         *  'state' can be checked for further info in case of failure
          * */
         int getHashValue(std::string &digest);
 };
