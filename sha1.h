@@ -2,7 +2,7 @@
  * Description:
  *  sha1.h consists of class definition for SHA1 which implements the Secure Hashing Algorithm (https://tools.ietf.org/html/rfc3174).
  * 
- *  Refer sha1.cpp for implementation of methods
+ *  Refer sha1.cpp for implementation details
  * */
 
 #ifndef SHA1_H
