@@ -7,8 +7,6 @@
 #include <sstream>
 #include "sha1.h"
 
-using namespace std;
-
 SHA1::SHA1()
 {
     SHA1::reset();
