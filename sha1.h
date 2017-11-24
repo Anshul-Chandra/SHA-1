@@ -98,6 +98,14 @@ class SHA1
          *  'state' can be checked for further info in case of failure
          * */
         int getHashValue(std::string &digest);
+
+        /* *
+         * Description:
+         *  Returns the current SHA1 state
+         * Returns:
+         *  String representing each of the SHA1 states defined in SHAState enum
+         * */
+        std::string getShaState();
 };
 
 #endif

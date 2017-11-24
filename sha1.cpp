@@ -287,3 +287,23 @@ int SHA1::getHashValue(std::string &digest)
 
     return SUCCESS;
 }
+
+/* *
+* Get string representation of current SHA1 state
+* */
+std::string SHA1::getShaState()
+{
+    switch(state)
+    {
+        case PROCESS:
+            return "[" + std::to_string(state) + "] Process";
+        case MESSAGE_TOO_LONG:
+            return "[" + std::to_string(state) + "] Message is too long";
+        case CORRUPTED:
+            return "[" + std::to_string(state) + "] Corrupted";
+        case COMPUTED:
+            return "[" + std::to_string(state) + "] Computed";
+        default:
+            return "Unknown State";
+    }
+}
